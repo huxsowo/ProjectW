@@ -10,7 +10,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="spigot-1.16.5" level="project" />
     <orderEntry type="library" name="LibsDisguises-10.0.28-Free" level="project" />
-    <orderEntry type="library" name="ProtocolLib" level="project" />
     <orderEntry type="library" name="Multiverse-Core-4.3.1" level="project" />
+    <orderEntry type="library" name="ProtocolLib" level="project" />
   </component>
 </module>
