@@ -1,0 +1,39 @@
+# This file is a template for a map datapoint file.
+# Simply edit the values listed here and put it in your map folder.
+# Make sure you put it in the same folder that has the advancements folder, data folder, datapacks folder, etc
+# If you're confused and need examples or further explanation, visit the google doc below
+# https://docs.google.com/document/d/1dbvI76ijOMCZ6n1HSifXznvEjnd-kNhJS8TdHIvoruM/edit?usp=sharing
+
+# CREDITS
+# List each person that helped create the map. Separate them with a comma and a space.
+credits: Person1, Person2
+
+# NAME
+# Input the name for your map
+# IMPORTANT: MAKE SURE THE WORLD FILE HAS THE SAME NAME AS THE MAP.
+# IMPORTANT: REPLACE ALL SPACES WITH HYPHENS.
+name: map-name
+
+# CORNERS
+# Copy the location of two opposite corners of the map. Make sure these corners extend past the map and that the ENTIRE map fits in between these two points.
+corner1: x1, y1, z1
+corner2: x2, y2, z2
+
+# POWERUP SPAWNS
+# Copy the location of the block that you want the powerup to spawn on top of.
+# Be sure the location you copy is in the MIDDLE of the block you want the powerup to spawn on top of.
+# OPTIONAL: declare the loot table for individual powerup spots. Leave blank to allow any powerup to spawn in the specified spot.
+# View the help document linked at the top of this file to learn how to declare loot tables.
+# IMPORTANT: There are 4 powerup spot templates here by default.
+# IMPORTANT: You can add as many as you want but be sure to number them correctly or else they will not work.
+# IMPORTANT: BE SURE TO DELETE UNUSED TEMPLATES
+pow1: x1, y1, z1
+pow2: x2, y2, z2
+pow3: x3, y3, z3
+pow4: x4, y4, z4
+
+# BOOST PADS
+# Specify the power of boost pads (if any) in the map
+# All boost pads in the map will boost at the same power
+verticalBoost: 1.0
+horizontalBoost: 0.0

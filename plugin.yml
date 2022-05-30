@@ -1,0 +1,13 @@
+main: ProjectW.ProjectW
+name: ProjectW
+version: 1
+author: Trenntt
+description: 'A re-imagining of Hypixels Wool Wars'
+api-version: 1.16
+commands:
+  kit:
+    description: 'Equips sender with the specified kit'
+    usage: /kit kitName
+  forcestart:
+    description: 'Admin command to force start the match'
+    usage: /forcestart
