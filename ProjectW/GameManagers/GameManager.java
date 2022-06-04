@@ -4,22 +4,24 @@ import ProjectW.Events.TeamScoreEvent;
 import ProjectW.Events.WoolBlockCapturedEvent;
 import ProjectW.MapData;
 import ProjectW.MapPoints.PowerupSpawn;
+import ProjectW.MapPoints.WoolPoint;
 import ProjectW.Team;
 import ProjectW.Utils.*;
 import ProjectW.ProjectW;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
@@ -30,15 +32,18 @@ public class GameManager extends BukkitRunnable implements Listener {
 
     private boolean roundGoing;
     private HashMap<Player, Team> playerTeamHashMap;
-    private HashMap<Team, Integer> teamScoreHashMap;
     private ArrayList<Team> teams;
     private ArrayList<Player> players;
     private MapData mapData;
     private GameStatus gameStatus;
     private World originalMap;
+    private boolean isPointDown;
+    private boolean isPointDropping;
     private World clonedMap;
     private Team redTeam;
     private Team blueTeam;
+    private ArrayList<Player> capturing;
+    private int timer = 20 * 30;
 
     private boolean forceStart = false;
 
@@ -52,39 +57,133 @@ public class GameManager extends BukkitRunnable implements Listener {
         }
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         playerTeamHashMap = new HashMap<Player, Team>();
-        teamScoreHashMap = new HashMap<Team, Integer>();
         players = new ArrayList<Player>();
+        capturing = new ArrayList<Player>();
         teams = new ArrayList<Team>();
+        isPointDown = false;
+        isPointDropping = false;
         this.plugin = plugin;
-        this.runTaskTimer(plugin,1,1);
         isRunning = true;
         gameStatus = GameStatus.WAITING_FOR_PLAYERS;
+        this.runTaskTimer(plugin,1,1);
     }
 
     @Override
     public void run(){
         switch (gameStatus){
             case WAITING_FOR_PLAYERS:
-                if (Objects.requireNonNull(Bukkit.getWorld("hub")).getPlayers().size() >= 8 || forceStart){
-                    gameStatus = GameStatus.PREPARING_MATCH;
+                if (Objects.requireNonNull(Bukkit.getWorld("hub")).getPlayers().size() >= 4 || forceStart){
                     prepareMatch();
+                    gameStatus = GameStatus.PREPARING_MATCH;
                     Bukkit.broadcastMessage("preparing match");
                     break;
                 }
                 break;
             case PREPARING_MATCH:
-
+                break;
             case SPAWNING:
-
+                break;
             case IN_ROUND:
-                Location checkLocation = mapData.getWoolPoint().getLocation().clone().add(0,5,0);
-                for (Entity entity : clonedMap.getNearbyEntities(checkLocation,2.5,5,2.5)){
-                    if (entity instanceof Player){
-                        Bukkit.broadcastMessage("capturing");
+                timer -= 1;
+                if (timer <= 0){
+                    if (!isPointDropping) {
+                        dropPoint();
                     }
-            }
-
+                } else {
+                    Bukkit.broadcastMessage("" + timer);
+                }
+                if (isPointDown) {
+                    Location checkLocation = Utils.getMiddleOfBlock(mapData.getWoolPoint().getLocation().getBlock()).clone().add(0, 20, 0);
+                    for (Entity entity : clonedMap.getNearbyEntities(checkLocation, 5.5, 20, 5.5)) {
+                        if (entity instanceof Player) {
+                            Block belowPlayer = Utils.getClosestBlockBelowPlayer((Player) entity, 40);
+                            for (Location woolLocations : mapData.getWoolPoint().getLocations()) {
+                                if (belowPlayer.getLocation() == woolLocations || belowPlayer.getLocation().equals(woolLocations)) {
+                                    if (!capturing.contains(entity)) {
+                                        capturing.add((Player) entity);
+                                        break;
+                                    }
+                                }
+                                capturing.remove(entity);
+                            }
+                        }
+                    }
+                }
         }
+    }
+
+    public void dropPoint(){
+        isPointDropping = true;
+        Location startLoc = mapData.getWoolPoint().getLocation().clone().add(0, 20, 0);
+        startLoc.getBlock().setType(Material.WHITE_WOOL);
+        new BukkitRunnable(){
+            @Override
+            public void run(){
+                Firework fw;
+                fw = (Firework) startLoc.getWorld().spawnEntity(startLoc, EntityType.FIREWORK);
+                FireworkMeta fwm = fw.getFireworkMeta();
+                fwm.setPower(2);
+                fwm.addEffect(FireworkEffect.builder().withColor(Color.GREEN).flicker(true).build());
+                fw.setFireworkMeta(fwm);
+                fw.detonate();
+                startLoc.getBlock().setType(Material.AIR);
+                startLoc.subtract(0,1,0);
+                if (startLoc.getBlock().getType() != Material.AIR){
+                    for (Location location : mapData.getWoolPoint().getLocations()){
+                        location.getBlock().setType(Material.WHITE_WOOL);
+                    }
+                    pointCaptureDetection();
+                    cancel();
+                    return;
+                }
+                startLoc.getBlock().setType(Material.WHITE_WOOL);
+            }
+        }.runTaskTimer(plugin, 1, 15);
+    }
+
+    public void pointCaptureDetection(){
+        isPointDown = true;
+        new BukkitRunnable(){
+            @Override
+            public void run(){
+                if (!isPointDown){
+                    cancel();
+                }
+                int redCaptureForce = 0;
+                int blueCaptureForce = 0;
+                for (Player player : capturing){
+                    if (playerTeamHashMap.get(player) == redTeam){
+                        redCaptureForce += 1;
+                    } else {
+                        blueCaptureForce += 1;
+                    }
+                }
+                if (redCaptureForce - blueCaptureForce == 0){
+                    if (capturing.size() > 0){
+                        Bukkit.broadcastMessage("Point is contested");
+                        return;
+                    }
+                    Bukkit.broadcastMessage("No one is capturing");
+                    mapData.getWoolPoint().setBack(0);
+                    return;
+                }
+                if (redCaptureForce - blueCaptureForce < 0){
+                    Bukkit.broadcastMessage("Blue is capturing");
+                    mapData.getWoolPoint().capture(TeamColor.BLUE, blueCaptureForce);
+                    if (mapData.getWoolPoint().isFullyBlue()){
+                        endMatch(blueTeam);
+                        cancel();
+                    }
+                } else {
+                    mapData.getWoolPoint().capture(TeamColor.RED, redCaptureForce);
+                    Bukkit.broadcastMessage("Red is capturing");
+                    if (mapData.getWoolPoint().isFullyRed()){
+                        endMatch(redTeam);
+                        cancel();
+                    }
+                }
+            }
+        }.runTaskTimer(plugin,1,20);
     }
 
     public void prepareMatch(){
@@ -106,17 +205,14 @@ public class GameManager extends BukkitRunnable implements Listener {
             @Override
             public void run(){
                 if (Bukkit.getWorld(clonedMap.getName()) != null){
-                    for (PowerupSpawn powerupSpawn : mapData.getPowerupSpawns()){
-
-                        powerupSpawn.startTimer();
-                    }
                     assignTeams(Bukkit.getWorld("hub"));
-                    for (Player player : Bukkit.getWorld("hub").getPlayers()){
-                        if (getInstance().getPlayerTeamHashMap().get(player).getTeamColor() == TeamColor.RED){
-                            player.teleport(mapData.getRedTeamSpawn().getLocation());
-                        }
-                        if (getInstance().getPlayerTeamHashMap().get(player).getTeamColor() == TeamColor.BLUE){
-                            player.teleport(mapData.getBlueTeamSpawn().getLocation());
+                    ArrayList<Location> startLocations = (ArrayList<Location>) mapData.getSpawnLocations().clone();
+                    for (Team team : teams){
+                        int rng = Utils.getRandomInteger(startLocations.size() - 1,0);
+                        Location spawnLocation = startLocations.get(rng);
+                        startLocations.remove(rng);
+                        for (Player player : team.getMembers()){
+                            player.teleport(spawnLocation);
                         }
                     }
                     Bukkit.broadcastMessage("teleported players");
@@ -126,38 +222,15 @@ public class GameManager extends BukkitRunnable implements Listener {
         }.runTaskLater(plugin, 150);
     }
 
-    public void startMatch(World world){
-        if (world.getPlayers().size() % 2 != 0){
-            return;
-        }
-        assignTeams(world);
-    }
-
-    public void endRound(Team scoringTeam) {
-        for (Player player : players) {
-            player.sendTitle(scoringTeam.getTeamColor().getName() + " scored!", "§c" + teamScoreHashMap.get(redTeam) + "§r - §9" + teamScoreHashMap.get(blueTeam), 8, 40, 8);
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (getPlayerTeamHashMap().get(player).getTeamColor() == TeamColor.RED) {
-                        player.teleport(mapData.getRedTeamSpawn().getLocation());
-                    } else {
-                        player.teleport(mapData.getBlueTeamSpawn().getLocation());
-                    }
-                    player.setGameMode(GameMode.SURVIVAL);
-                }
-            }.runTaskLater(plugin, 60);
-        }
-    }
-
     public void endMatch(Team winningTeam){
+        isPointDown = false;
         for (Player player : players){
-            player.sendTitle(winningTeam.getTeamColor().getName() + " wins!", "§c" + teamScoreHashMap.get(redTeam) + "§r - §9" + teamScoreHashMap.get(blueTeam), 8, 40, 8);
+            player.sendTitle(winningTeam.getTeamColor().getName() + " wins!","", 8, 40, 8);
+            player.setGameMode(GameMode.SPECTATOR);
             new BukkitRunnable(){
                 @Override
                 public void run(){
-                    player.teleport(ProjectW.getHubSpawnLocation());
-                    players.remove(player);
+                    player.teleport(Utils.getMiddleOfBlock(ProjectW.getHubSpawnLocation().getBlock()).add(0,0.5,0));
                 }
             }.runTaskLater(plugin, 60);
         }
@@ -167,13 +240,17 @@ public class GameManager extends BukkitRunnable implements Listener {
                 MapUtil.deleteMap(clonedMap);
                 gameStatus = GameStatus.WAITING_FOR_PLAYERS;
                 teams.clear();
-                teamScoreHashMap.clear();
                 playerTeamHashMap.clear();
                 mapData = null;
+                isPointDropping = false;
                 forceStart = false;
+                players.clear();
+                players.addAll(ProjectW.getHubWorld().getPlayers());
+                for (Player player : players){
+                    Bukkit.broadcastMessage(player.getName());
+                }
             }
         }.runTaskLater(plugin, 60);
-
     }
 
     public void assignTeams(World world){
@@ -208,22 +285,6 @@ public class GameManager extends BukkitRunnable implements Listener {
         teams.add(blueTeam);
         this.redTeam = redTeam;
         this.blueTeam = blueTeam;
-        teamScoreHashMap.put(redTeam, 0);
-        teamScoreHashMap.put(blueTeam, 0);
-    }
-
-    @EventHandler
-    public void onTeamScore(TeamScoreEvent e){
-        e.getPlayerTeam().score();
-        mapData.getWoolPoint().reset();
-        for (Player player : players){
-            player.setGameMode(GameMode.SPECTATOR);
-            if (teamScoreHashMap.get(e.getPlayerTeam()) >= 3){
-                endMatch(e.getPlayerTeam());
-            } else {
-                endRound(e.getPlayerTeam());
-            }
-        }
     }
 
     @EventHandler
@@ -244,21 +305,6 @@ public class GameManager extends BukkitRunnable implements Listener {
     }
 
     @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e){
-        Player player = e.getPlayer();
-        Block blockBelow = player.getLocation().clone().subtract(0, 0.25,0).getBlock();
-        switch (blockBelow.getType()){
-            case SLIME_BLOCK:
-                if (mapData.getHorizontalBoost() == 0){
-                    player.setVelocity(player.getVelocity().setY(mapData.getVerticalBoost()));
-                } else {
-                    player.setVelocity(player.getLocation().getDirection().multiply(mapData.getHorizontalBoost()).setY(mapData.getVerticalBoost()));
-                }
-                break;
-        }
-    }
-
-    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         Player player = e.getPlayer();
         if (getInstance().gameStatus == GameStatus.WAITING_FOR_PLAYERS){
@@ -269,7 +315,7 @@ public class GameManager extends BukkitRunnable implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e){
         Player player = e.getPlayer();
-        players.add(player);
+        players.remove(player);
         getPlayerTeamHashMap().remove(player);
     }
 
@@ -278,8 +324,6 @@ public class GameManager extends BukkitRunnable implements Listener {
     public boolean isRoundGoing(){return roundGoing;}
 
     public HashMap<Player, Team> getPlayerTeamHashMap(){return playerTeamHashMap;}
-
-    public HashMap<Team, Integer> getTeamScoreHashMap(){return teamScoreHashMap;}
 
     public ArrayList<Team> getTeams(){return teams;}
 

@@ -12,6 +12,13 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -22,7 +29,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="E:/libraries/ProtocolLib.jar!/" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15917969" />
     <property name="project.structure.side.proportion" value="0.2" />
   </component>
@@ -30,6 +37,13 @@
     <configuration />
   </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="52bfe96d-aa3d-4721-899b-0e974018ae76" name="Default Changelist" comment="" />
+      <created>1653974967730</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1653974967730</updated>
+    </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
@@ -45,9 +59,14 @@
       <screen x="-1920" y="363" width="1920" height="1080" />
     </state>
     <state x="-1380" y="638" key="IDE.errors.dialog/-1920.363.1920.1080/0.0.2560.1440@-1920.363.1920.1080" timestamp="1653951894932" />
-    <state x="-1480" y="477" key="SettingsEditor" timestamp="1653952711134">
-      <screen x="-1920" y="363" width="1920" height="1080" />
+    <state x="587" y="152" key="SettingsEditor" timestamp="1653965934273">
+      <screen x="0" y="0" width="2560" height="1440" />
     </state>
     <state x="-1480" y="477" key="SettingsEditor/-1920.363.1920.1080/0.0.2560.1440@-1920.363.1920.1080" timestamp="1653952711134" />
+    <state x="587" y="152" key="SettingsEditor/-1920.363.1920.1080/0.0.2560.1440@0.0.2560.1440" timestamp="1653965934273" />
+    <state x="976" y="544" key="com.intellij.ide.util.TipDialog" timestamp="1653974972318">
+      <screen x="0" y="0" width="2560" height="1440" />
+    </state>
+    <state x="976" y="544" key="com.intellij.ide.util.TipDialog/-1920.363.1920.1080/0.0.2560.1440@0.0.2560.1440" timestamp="1653974972318" />
   </component>
 </project>

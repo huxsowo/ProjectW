@@ -6,15 +6,24 @@
 
 # CREDITS
 # List each person that helped create the map. Separate them with a comma and a space.
-credits: Person1, Person2
+credits: Mineplex
 
 # NAME
 # Input the name for your map
 # IMPORTANT: MAKE SURE THE WORLD FILE HAS THE SAME NAME AS THE MAP.
 # IMPORTANT: REPLACE ALL SPACES WITH HYPHENS.
-name: map-name
+name: Tectonic-Islands
 
 # CORNERS
 # Copy the location of two opposite corners of the map. Make sure these corners extend past the map and that the ENTIRE map fits in between these two points.
-corner1: x1, y1, z1
-corner2: x2, y2, z2
+corner1: 49.5, 64.5, -62.5
+corner2: -42.5, 25.5, 34.5
+
+# POWERUP SPAWNS
+# Copy the location of the block that you want the powerup to spawn on top of.
+# Be sure the location you copy is in the MIDDLE of the block you want the powerup to spawn on top of.
+# OPTIONAL: declare the loot table for individual powerup spots. Leave blank to allow any powerup to spawn in the specified spot.
+# View the help document linked at the top of this file to learn how to declare loot tables.
+# IMPORTANT: There are 4 powerup spot templates here by default.
+# IMPORTANT: You can add as many as you want but be sure to number them correctly or else they will not work.
+# IMPORTANT: BE SURE TO DELETE UNUSED TEMPLATES

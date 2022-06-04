@@ -59,72 +59,35 @@ public class MapUtil {
     }
 
     public static MapData createMapData(World map, Map<String, Object> ymlData) {
-        MapData mapData = new MapData();
+        Bukkit.broadcastMessage("creating map data");
         String mapName = (String) ymlData.get("name");
-        mapData.setName(mapName);
-        double horizontalBoost = (double) ymlData.get("horizontalBoost");
-        mapData.setHorizontalBoost(horizontalBoost);
-        double verticalBoost = (double) ymlData.get("verticalBoost");
-        mapData.setVerticalBoost(verticalBoost);
+        ArrayList<Location> spawnLocations = new ArrayList<Location>();
+        WoolPoint woolPoint = null;
         String[] locs1 = ((String) ymlData.get("corner1")).split(", ");
         String[] locs2 = ((String) ymlData.get("corner2")).split(", ");
         Location corner1 = new Location(map, Float.parseFloat(locs1[0]), Float.parseFloat(locs1[1]), Float.parseFloat(locs1[2]));
         Location corner2 = new Location(map, Float.parseFloat(locs2[0]), Float.parseFloat(locs2[1]), Float.parseFloat(locs2[2]));
         Cuboid mapCuboid = new Cuboid(corner1, corner2);
         for (Block block : mapCuboid) {
-            if (!(block.getState() instanceof Sign) && block.getType() != Material.EMERALD_BLOCK){
+            if (block.getType() != Material.DIAMOND_BLOCK && block.getType() != Material.EMERALD_BLOCK){
                 continue;
             }
-            if (block.getState() instanceof Sign){
-                Sign sign = (Sign) block.getState();
-                for (String line : sign.getLines()){
-                    if (line.equalsIgnoreCase("RED")){
-                        mapData.setRedTeamSpawn(new TeamSpawn(block.getLocation().add(0.5,0,0.5), TeamColor.RED));
-                        block.setType(Material.AIR);
-                        break;
-                    }
-                    if (line.equalsIgnoreCase("BLUE")){
-                        mapData.setBlueTeamSpawn(new TeamSpawn(block.getLocation().add(0.5,0,0.5), TeamColor.BLUE));
-                        block.setType(Material.AIR);
-                        break;
-                    }
-                }
+            Bukkit.broadcastMessage("datapoint");
+            if (block.getType() == Material.DIAMOND_BLOCK && block.getRelative(BlockFace.UP).getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE){
+                Bukkit.broadcastMessage("SPAWN POINT");
+                spawnLocations.add(Utils.getMiddleOfBlock(block));
+                block.getRelative(BlockFace.UP).setType(Material.AIR);
+                block.setType(Material.AIR);
             }
             if (block.getType() == Material.EMERALD_BLOCK && block.getRelative(BlockFace.UP).getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE){
+                Bukkit.broadcastMessage("CAPTURE POINT");
                 Location woolLocation = Utils.getMiddleOfBlock(block.getLocation().subtract(0,1,0).getBlock());
-                mapData.setWoolPoint(new WoolPoint(woolLocation));
-                block.setType(Material.AIR);
+                woolPoint = new WoolPoint(woolLocation);
                 block.getRelative(BlockFace.UP).setType(Material.AIR);
-            }
-            if (mapData.getWoolPoint() != null && mapData.getBlueTeamSpawn() != null && mapData.getRedTeamSpawn() != null){
-                break;
+                block.setType(Material.AIR);
             }
         }
-        ArrayList<PowerupSpawn> powerupSpawns = new ArrayList<PowerupSpawn>();
-        ArrayList<Powerup> powerups = new ArrayList<Powerup>();
-        for (int i = 1; ; i++){
-            String powData = (String) ymlData.get("pow" + i);
-            if (powData == null){
-                break;
-            } else {
-                String[] splitPowData = powData.split(", ");
-                Location location = new Location(map, Float.parseFloat(splitPowData[0]), Float.parseFloat(splitPowData[1]), Float.parseFloat(splitPowData[2]));
-                if (splitPowData.length >= 4) {
-                    for (int c = 3; ; c++) {
-                        if (splitPowData[c] != null) {
-                            powerups.add(getPowerupFromYml(splitPowData[c]));
-                        } else {
-                            break;
-                        }
-                    }
-                } else {
-                    powerups.addAll(Arrays.asList(PowerupManager.getInstance().getAllPowerups()));
-                }
-                powerupSpawns.add(new PowerupSpawn(location, powerups));
-            }
-        }
-        mapData.setPowerupSpawns(powerupSpawns);
-        return mapData;
+        return new MapData(mapName, woolPoint, spawnLocations);
     }
 
     public static Powerup getPowerupFromYml(String powData){
@@ -138,12 +101,12 @@ public class MapUtil {
 
     public static String initializeMap(String mapName){
         String newMapName = "CLONED-" + mapName;
+        if (ProjectW.getMultiverseCore().getMVWorldManager().getMVWorld(newMapName) != null){
+            ProjectW.getMultiverseCore().getMVWorldManager().deleteWorld(newMapName);
+        }
         ProjectW.getMultiverseCore().getMVWorldManager().cloneWorld(mapName, newMapName);
         World world = Bukkit.getWorld(newMapName);
         MapData mapData = createMapData(world, getMapDatapoints(world));
-        for (Block block : mapData.getWoolPoint().getBlocks()){
-            block.setType(Material.RED_WOOL);
-        }
         GameManager.getInstance().setMapData(mapData);
         return newMapName;
     }
@@ -162,8 +125,7 @@ public class MapUtil {
                 ConsoleMessageUtil.LogDebugMessage("map added");
             }
         }
-        //return mapList.get(Utils.getRandomInteger(mapList.size() -1, 0));
-        return mapList.get(1);
+        return mapList.get(Utils.getRandomInteger(mapList.size() -1, 0));
     }
 
     public static void deleteMap(World world){

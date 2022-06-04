@@ -35,15 +35,6 @@ public class Team {
         members.remove(player);
     }
 
-    public void score(){
-        GameManager.getInstance().getTeamScoreHashMap().replace(this, (getScore() + 1));
-        TeamScoreEvent event = new TeamScoreEvent(this);
-    }
-
-    public int getScore(){
-        return GameManager.getInstance().getTeamScoreHashMap().get(this);
-    }
-
     public ArrayList<Player> getMembers(){return members;}
 
     public TeamColor getTeamColor(){return teamColor;}

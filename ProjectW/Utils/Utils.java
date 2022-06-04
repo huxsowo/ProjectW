@@ -4,13 +4,16 @@ import net.minecraft.server.v1_16_R3.ChatMessageType;
 import net.minecraft.server.v1_16_R3.IChatBaseComponent;
 import net.minecraft.server.v1_16_R3.PacketPlayOutChat;
 import org.bukkit.Bukkit;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class Utils {
@@ -74,5 +77,14 @@ public class Utils {
     public static Location getMiddleOfBlock(Block block){
         Location blockLocation = block.getLocation();
         return blockLocation.add(0.5, 0.5, 0.5);
+    }
+
+    public static Block getClosestBlockBelowPlayer(Player player, double maxDistance){
+        World world = player.getWorld();
+        RayTraceResult result = world.rayTraceBlocks(player.getLocation(), player.getLocation().getDirection().clone().setY(-1), maxDistance, FluidCollisionMode.NEVER, true);
+        if (result.getHitBlock() != null){
+            return result.getHitBlock();
+        }
+        return null;
     }
 }

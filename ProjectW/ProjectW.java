@@ -6,6 +6,7 @@ import ProjectW.Utils.*;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import net.minecraft.server.v1_16_R3.EntityArmorStand;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ public class ProjectW extends JavaPlugin implements Listener {
 
     private static Plugin ourInstance;
     private static Location hubSpawnLocation;
+    private static World hubWorld;
 
     public static void main(String[] args){
 
@@ -40,6 +42,7 @@ public class ProjectW extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(new DamageUtil(), this);
 
         hubSpawnLocation = Bukkit.getWorld("hub").getSpawnLocation();
+        hubWorld = Bukkit.getWorld("hub");
 
         KitManager.getInstance().start();
         PowerupManager.getInstance().start();
@@ -49,17 +52,6 @@ public class ProjectW extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable(){
-        for (EntityArmorStand armorStand : PowerupManager.getInstance().getPowerupStands()){
-            armorStand.die();
-        }
-        if (GameManager.getInstance().getClonedMap() == null){
-            return;
-        }
-        String clonedMapName = GameManager.getInstance().getClonedMap().getName();
-        if (getMultiverseCore().getMVWorldManager().getMVWorld(clonedMapName) != null){
-            getMultiverseCore().getMVWorldManager().deleteWorld(clonedMapName);
-        }
-        PowerupManager.getInstance().getPowerupStands().clear();
     }
 
     @Override
@@ -140,6 +132,7 @@ public class ProjectW extends JavaPlugin implements Listener {
         player.setLevel(0);
         player.getInventory().clear();
         player.setGameMode(GameMode.SURVIVAL);
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(999999);
         player.teleport(Bukkit.getWorld("hub").getSpawnLocation());
     }
 
@@ -183,13 +176,6 @@ public class ProjectW extends JavaPlugin implements Listener {
             return;
         }
         e.setCancelled(true);
-        for (Location check : GameManager.getInstance().getMapData().getWoolPoint().getLocations()){
-            if (block.getLocation() == check || block.getLocation().equals(check)){
-                WoolBlockCapturedEvent event = new WoolBlockCapturedEvent(player, block, GameManager.getInstance().getPlayerTeamHashMap().get(player));
-                Bukkit.getServer().getPluginManager().callEvent(event);
-                break;
-            }
-        }
     }
 
     @EventHandler
@@ -200,4 +186,6 @@ public class ProjectW extends JavaPlugin implements Listener {
     }
 
     public static Location getHubSpawnLocation(){return hubSpawnLocation;}
+
+    public static World getHubWorld(){return hubWorld;}
 }

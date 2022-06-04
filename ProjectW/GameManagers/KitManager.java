@@ -3,6 +3,7 @@ package ProjectW.GameManagers;
 import ProjectW.Kit;
 import ProjectW.Kits.KitIronGolem;
 import ProjectW.Kits.KitPiglin;
+import ProjectW.Kits.KitWitch;
 import ProjectW.Kits.KitZombie;
 import ProjectW.Utils.ConsoleMessageUtil;
 import ProjectW.Utils.ServerMessageType;
@@ -25,6 +26,7 @@ public class KitManager {
                 new KitZombie(),
                 new KitIronGolem(),
                 new KitPiglin(),
+                new KitWitch(),
         };
     }
 
