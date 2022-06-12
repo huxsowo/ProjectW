@@ -40,7 +40,7 @@ public class WoolPoint implements Listener {
         // absolutely monster brained up by space and deidara
         float radiusSquared = radius * radius;
         int blockRadius = (int)Math.ceil(radius);
-        Location currentLocation = centerBlock.getLocation().subtract(floorRadius, 0, 0);
+        Location currentLocation = centerBlock.getLocation().subtract(blockRadius, 0, 0);
         for (int x = 0; i < blockRadius; x++) 
         {
             for (int z = 0; z < blockRadius; z++) 
