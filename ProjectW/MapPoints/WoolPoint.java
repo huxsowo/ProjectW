@@ -36,107 +36,31 @@ public class WoolPoint implements Listener {
     }
 
     public ArrayList<Block> getWoolPointBlocks(Block centerBlock){
-        Location centerLocation = Utils.getMiddleOfBlock(centerBlock);
-        ArrayList<Block> blocks = new ArrayList<Block>();
-        blocks.add(centerLocation.clone().add(0,0,5).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,1).getBlock());
-        blocks.add(centerBlock);
-        blocks.add(centerLocation.clone().add(0,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,-4).getBlock());
-        blocks.add(centerLocation.clone().add(0,0,-5).getBlock());
-
-        blocks.add(centerLocation.clone().add(1,0,5).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,-4).getBlock());
-        blocks.add(centerLocation.clone().add(1,0,-5).getBlock());
-
-        blocks.add(centerLocation.clone().add(2,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(2,0,-4).getBlock());
-
-        blocks.add(centerLocation.clone().add(3,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(3,0,-4).getBlock());
-
-        blocks.add(centerLocation.clone().add(4,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(4,0,-3).getBlock());
-
-        blocks.add(centerLocation.clone().add(5,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(5,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(5,0,-1).getBlock());
-        //HALFWAY
-        blocks.add(centerLocation.clone().add(-1,0,5).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,-4).getBlock());
-        blocks.add(centerLocation.clone().add(-1,0,-5).getBlock());
-
-        blocks.add(centerLocation.clone().add(-2,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(-2,0,-4).getBlock());
-
-        blocks.add(centerLocation.clone().add(-3,0,4).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,-3).getBlock());
-        blocks.add(centerLocation.clone().add(-3,0,-4).getBlock());
-
-        blocks.add(centerLocation.clone().add(-4,0,3).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,2).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,-1).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,-2).getBlock());
-        blocks.add(centerLocation.clone().add(-4,0,-3).getBlock());
-
-        blocks.add(centerLocation.clone().add(-5,0,1).getBlock());
-        blocks.add(centerLocation.clone().add(-5,0,0).getBlock());
-        blocks.add(centerLocation.clone().add(-5,0,-1).getBlock());
+        float radius = 5.2f; // Converting this to a class variable should be trivial (as it should be)
+        // absolutely monster brained up by space and deidara
+        float radiusSquared = radius * radius;
+        int blockRadius = (int)Math.ceil(radius);
+        Location currentLocation = centerBlock.getLocation().subtract(floorRadius, 0, 0);
+        for (int x = 0; i < blockRadius; x++) 
+        {
+            for (int z = 0; z < blockRadius; z++) 
+            {
+                if (x*x + z*z <= radiusSquared) {
+                    //HALFWAY
+                    //this doubles up on blocks along the x and z axis because i am lazy
+                    blocks.add(currentLocation.getBlock());
+                    currentLocation.subtract(2*x, 0, 0);
+                    blocks.add(currentLocation.getBlock());
+                    currentLocation.subtract(0, 0, 2*z);
+                    blocks.add(currentLocation.getBlock());
+                    currentLocation.add(2*x, 0, 0);
+                    blocks.add(currentLocation.getBlock());
+                    currentLocation.add(0, 0, 2*z);
+                }
+                currentLocation.add(0, 0, 1);
+            }
+            currentLocation.add(1, 0, 0);
+        }
         return blocks;
     }
 
